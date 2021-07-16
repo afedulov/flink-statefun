@@ -58,8 +58,6 @@ import org.apache.flink.statefun.sdk.io.Router;
  * <p>Finally, to allow the Stateful Functions runtime to discover the registered modules, the JAR
  * files containing the modules and provider configuration files should be added to a
  * system-specific class path directory, {@code /opt/statefun/modules/}.
- *
- * <p>For a simple demonstration, you can consult the {@code statefun-greeter-example} example.
  */
 public interface StatefulFunctionModule {
 

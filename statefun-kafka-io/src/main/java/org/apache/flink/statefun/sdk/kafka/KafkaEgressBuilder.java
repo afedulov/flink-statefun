@@ -45,7 +45,7 @@ public final class KafkaEgressBuilder<OutT> {
   /**
    * @param egressIdentifier A unique egress identifier.
    * @param <OutT> The type the egress will output.
-   * @return A {@link KafkaIngressBuilder}.
+   * @return A {@link KafkaEgressBuilder}.
    */
   public static <OutT> KafkaEgressBuilder<OutT> forIdentifier(
       EgressIdentifier<OutT> egressIdentifier) {

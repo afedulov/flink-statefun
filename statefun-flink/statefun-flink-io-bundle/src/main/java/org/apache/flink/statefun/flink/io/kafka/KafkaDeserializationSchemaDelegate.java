@@ -52,9 +52,8 @@ final class KafkaDeserializationSchemaDelegate<T> implements KafkaDeserializatio
     // information
     // of IngressIdentifier's producedType.
     // see: Sources#setOutputType.
-    // if this invriant would not hold in the future, this type information would produce a
-    // serialier
-    // that fails immediately.
+    // if this invariant would not hold in the future, this type information would produce a
+    // serializer that fails immediately.
     return producedTypeInfo;
   }
 }

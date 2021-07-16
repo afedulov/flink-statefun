@@ -24,7 +24,7 @@ import org.apache.flink.statefun.sdk.Address;
 public interface BackPressureValve {
 
   /**
-   * Indicates rather a back pressure is needed.
+   * Indicates whether a back pressure is needed.
    *
    * @return true if a back pressure should be applied.
    */
