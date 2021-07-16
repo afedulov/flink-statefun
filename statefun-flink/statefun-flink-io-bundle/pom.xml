@@ -31,6 +31,8 @@ under the License.
 
     <properties>
         <additional-sources.dir>target/additional-sources</additional-sources.dir>
+<!--        <pulsar-flink-connector.version>2.7.6</pulsar-flink-connector.version>-->
+        <pulsar-flink-connector.version>1.13.1.1</pulsar-flink-connector.version>
     </properties>
 
     <dependencies>
@@ -71,6 +73,11 @@ under the License.
             <artifactId>statefun-kinesis-io</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>statefun-pulsar-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- flink  -->
         <dependency>
@@ -91,6 +98,49 @@ under the License.
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kinesis_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- flink pulsar connector -->
+<!--        <dependency>-->
+<!--            <groupId>io.streamnative.connectors</groupId>-->
+<!--            <artifactId>pulsar-flink-connector-${scala.binary.version}-1.12</artifactId>-->
+<!--            <version>${pulsar-flink-connector.version}</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>io.streamnative.connectors</groupId>
+            <artifactId>pulsar-flink-connector_2.12</artifactId>
+            <version>${pulsar-flink-connector.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>force-shading</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId> org.apache.pulsar</groupId>
+                    <artifactId>bouncy-castle-bc</artifactId>
+                </exclusion>
+
+            </exclusions>
+
         </dependency>
 
         <!-- 3rd party -->
