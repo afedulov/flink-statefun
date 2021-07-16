@@ -26,6 +26,7 @@ import org.apache.flink.statefun.flink.common.json.Selectors;
 import org.apache.flink.statefun.flink.core.protorouter.AutoRoutableProtobufRouter;
 import org.apache.flink.statefun.flink.io.kafka.ProtobufKafkaIngressTypes;
 import org.apache.flink.statefun.flink.io.kinesis.PolyglotKinesisIOTypes;
+import org.apache.flink.statefun.flink.io.pulsar.ProtobufPulsarIngressTypes;
 import org.apache.flink.statefun.flink.io.spi.JsonIngressSpec;
 import org.apache.flink.statefun.sdk.IngressType;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
@@ -71,6 +72,7 @@ final class IngressJsonEntity implements JsonEntity {
 
   private static boolean isAutoRoutableIngress(IngressType ingressType) {
     return ingressType.equals(ProtobufKafkaIngressTypes.ROUTABLE_PROTOBUF_KAFKA_INGRESS_TYPE)
-        || ingressType.equals(PolyglotKinesisIOTypes.ROUTABLE_PROTOBUF_KINESIS_INGRESS_TYPE);
+        || ingressType.equals(PolyglotKinesisIOTypes.ROUTABLE_PROTOBUF_KINESIS_INGRESS_TYPE)
+        || ingressType.equals(ProtobufPulsarIngressTypes.ROUTABLE_PROTOBUF_PULSAR_INGRESS_TYPE);
   }
 }
