@@ -58,6 +58,7 @@ under the License.
         <module>statefun-flink</module>
         <module>statefun-shaded</module>
         <module>statefun-testutil</module>
+        <module>statefun-run</module>
 
         <!--
             Always build the end-to-end tests module last,

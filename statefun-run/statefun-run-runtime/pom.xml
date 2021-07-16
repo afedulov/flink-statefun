@@ -1,0 +1,44 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>statefun-run</artifactId>
+    <groupId>org.apache</groupId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>statefun-run-runtime</artifactId>
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+
+<!--    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>statefun-flink-core</artifactId>
+      <version>${statefun.version}-patched</version>
+    </dependency>-->
+
+<!--    <dependency>-->
+<!--      <groupId>org.apache.flink</groupId>-->
+<!--      <artifactId>statefun-protocol-shaded</artifactId>-->
+<!--      <version>${statefun.version}</version>-->
+<!--    </dependency>-->
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>statefun-flink-harness</artifactId>
+      <version>${statefun.version}</version>
+<!--      <exclusions>
+        <exclusion>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>statefun-flink-core</artifactId>
+        </exclusion>
+      </exclusions>-->
+    </dependency>
+  </dependencies>
+</project>
