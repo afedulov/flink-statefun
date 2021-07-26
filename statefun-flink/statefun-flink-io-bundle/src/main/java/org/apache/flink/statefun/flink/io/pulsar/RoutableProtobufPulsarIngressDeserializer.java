@@ -50,6 +50,8 @@ public final class RoutableProtobufPulsarIngressDeserializer
       throw new IllegalStateException(
           "Consumed a record from topic [" + topic + "], but no routing config was specified.");
     }
+    System.out.println(">>> Message: " + input.getKey() + " -> " + new String(input.getData()));
+
     return AutoRoutable.newBuilder()
         .setConfig(routingConfig)
         .setId(id)

@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
-
+import sys
 import uuid
 from statefun import *
 
@@ -31,6 +31,7 @@ functions = StatefulFunctions()
     typename="org.apache.flink.statefun.e2e.remote/counter",
     specs=[ValueSpec(name='invoke_count', type=IntType)])
 def counter(context, message):
+    print(">> MESSAGE RECEIVED!", file=sys.stderr)
     """
     Keeps count of the number of invocations, and forwards that count
     to be sent to the Kafka egress. We do the extra forwarding instead
@@ -44,7 +45,7 @@ def counter(context, message):
     response = InvokeResult()
     response.id = context.address.id
     response.invoke_count = n
-
+    print(">> RESPONSE: \n" + str(response), file=sys.stderr)
     context.send(
         message_builder(target_typename="org.apache.flink.statefun.e2e.remote/forward-function",
                         # use random keys to simulate both local handovers and
@@ -60,6 +61,7 @@ def forward_to_egress(context, message):
     Simply forwards the results to the Kafka egress.
     """
     invoke_result = message.as_type(InvokeResultType)
+    print(">> forward_to_egress: \n" + str(invoke_result), file=sys.stderr)
 
     egress_message = kafka_egress_message(
         typename="org.apache.flink.statefun.e2e.remote/invoke-results",
@@ -92,4 +94,5 @@ def handle():
 
 
 if __name__ == "__main__":
-    app.run()
+    print(">> STARTING REMOTE FUNCTION!", file=sys.stderr)
+    app.run(host="0.0.0.0")

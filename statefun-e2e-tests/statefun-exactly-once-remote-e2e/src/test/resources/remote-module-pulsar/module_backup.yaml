@@ -14,7 +14,6 @@
 # limitations under the License.
 
 version: "3.0"
-
 module:
   meta:
     type: remote
@@ -27,7 +26,30 @@ module:
             functions: org.apache.flink.statefun.e2e.remote/*
 #            urlPathTemplate: http://remote-function:8000/service
             urlPathTemplate: http://remote-function:5000/service
-            maxNumBatchRequests: 10000
+#            timeout:
+#              connect: 2 sec
+#              read: 2 sec
+#              write: 2 sec
+#              call: 2 sec
+#            maxNumBatchRequests: 1
+            # maxNumBatchRequests: 10000
+#    ingresses:
+#      - ingress:
+#          meta:
+#            type: io.statefun.pulsar/ingress
+#            id: org.apache.flink.statefun.e2e.remote/invoke
+#          spec:
+#            service-url: pulsar://pulsar-cluster:6650
+#            admin-url: http://pulsar-cluster:8080
+#            subscription: my-subscription
+#            startupPosition:
+#              type: earliest
+#            topics:
+#              - topic: persistent://public/default/invoke
+#                valueType: statefun.e2e/org.apache.flink.statefun.e2e.remote.Invoke
+#                targets:
+#                  - org.apache.flink.statefun.e2e.remote/counter
+
     ingresses:
       - ingress:
           meta:

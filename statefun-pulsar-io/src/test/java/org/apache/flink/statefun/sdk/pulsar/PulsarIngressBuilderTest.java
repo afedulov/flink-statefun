@@ -38,7 +38,8 @@ public class PulsarIngressBuilderTest {
   public void idIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -52,7 +53,8 @@ public class PulsarIngressBuilderTest {
   public void ingressTypeIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -66,7 +68,8 @@ public class PulsarIngressBuilderTest {
   public void topicsIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -83,7 +86,8 @@ public class PulsarIngressBuilderTest {
   public void deserializerIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -97,7 +101,8 @@ public class PulsarIngressBuilderTest {
   public void startupPositionIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -111,7 +116,8 @@ public class PulsarIngressBuilderTest {
   public void propertiesIsCorrect() {
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class);
@@ -120,7 +126,9 @@ public class PulsarIngressBuilderTest {
 
     assertThat(
         spec.properties(),
-        allOf(isMapOfSize(1), hasProperty(PulsarConsumerConfig.SERVICE_URL, "localhost:8082")));
+        allOf(
+            isMapOfSize(3),
+            hasProperty(PulsarConsumerConfig.SERVICE_URL, "pulsar://localhost:6650")));
 
     // TODO: add required parameters for pulsar
     //   hasProperty(ConsumerConfig.GROUP_ID_CONFIG, "test-group"),
@@ -134,7 +142,8 @@ public class PulsarIngressBuilderTest {
 
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class)
@@ -142,7 +151,9 @@ public class PulsarIngressBuilderTest {
 
     PulsarIngressSpec<String> spec = builder.build();
 
-    assertThat(spec.properties(), hasProperty(PulsarConsumerConfig.SERVICE_URL, "localhost:8082"));
+    assertThat(
+        spec.properties(),
+        hasProperty(PulsarConsumerConfig.SERVICE_URL, "pulsar://localhost:6650"));
   }
 
   @Test
@@ -152,8 +163,8 @@ public class PulsarIngressBuilderTest {
 
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            // TODO: admin/service URL with the right ports
-            .withServiceUrl("localhost:8082")
+            .withAdminUrl("http://localhost:8080")
+            .withServiceUrl("pulsar://localhost:6650")
             .withTopic("topic")
             .withSubscription("test-subscription")
             .withDeserializer(NoOpDeserializer.class)

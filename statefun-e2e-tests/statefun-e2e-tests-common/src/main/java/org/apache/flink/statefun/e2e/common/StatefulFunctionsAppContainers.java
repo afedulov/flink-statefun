@@ -252,7 +252,7 @@ public final class StatefulFunctionsAppContainers extends ExternalResource {
 
       return new StatefulFunctionsAppContainers(
           masterContainer(appImage, network, dependentContainers, numWorkers, masterLogger),
-          workerContainers(appImage, numWorkers, network));
+          workerContainers(appImage, numWorkers, network, masterLogger));
     }
 
     private static ImageFromDockerfile appImage(
@@ -264,7 +264,7 @@ public final class StatefulFunctionsAppContainers extends ExternalResource {
 
       final ImageFromDockerfile appImage =
           new ImageFromDockerfile(appName)
-              .withFileFromClasspath("Dockerfile", "Dockerfile")
+              //              .withFileFromClasspath("Dockerfile", "Dockerfile")
               .withFileFromPath(".", targetDirPath);
 
       Configuration flinkConf = resolveFlinkConf(dynamicProperties);
@@ -346,16 +346,22 @@ public final class StatefulFunctionsAppContainers extends ExternalResource {
     }
 
     private static List<GenericContainer<?>> workerContainers(
-        ImageFromDockerfile appImage, int numWorkers, Network network) {
+        ImageFromDockerfile appImage, int numWorkers, Network network, Logger logger) {
       final List<GenericContainer<?>> workers = new ArrayList<>(numWorkers);
 
       for (int i = 0; i < numWorkers; i++) {
-        workers.add(
+        GenericContainer worker =
             new GenericContainer(appImage)
                 .withNetwork(network)
                 .withNetworkAliases(workerHostOf(i))
                 .withEnv("ROLE", "worker")
-                .withEnv("MASTER_HOST", MASTER_HOST));
+                .withEnv("MASTER_HOST", MASTER_HOST);
+
+        if (logger != null) {
+          worker.withLogConsumer(new Slf4jLogConsumer(logger, true));
+        }
+
+        workers.add(worker);
       }
 
       return workers;

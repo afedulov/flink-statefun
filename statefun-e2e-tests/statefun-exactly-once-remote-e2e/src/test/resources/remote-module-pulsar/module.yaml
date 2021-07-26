@@ -28,21 +28,38 @@ module:
 #            urlPathTemplate: http://remote-function:8000/service
             urlPathTemplate: http://remote-function:5000/service
             maxNumBatchRequests: 10000
+
     ingresses:
       - ingress:
           meta:
-            type: io.statefun.kafka/ingress
+            type: io.statefun.pulsar/ingress
             id: org.apache.flink.statefun.e2e.remote/invoke
           spec:
-            address: kafka-broker:9092
-            consumerGroupId: remote-module-e2e
+            service-url: pulsar://pulsar-cluster:6650
+            admin-url: http://pulsar-cluster:8080
+            subscription: my-subscription
             startupPosition:
               type: earliest
             topics:
-              - topic: invoke
+              - topic: persistent://public/default/invoke
                 valueType: statefun.e2e/org.apache.flink.statefun.e2e.remote.Invoke
                 targets:
                   - org.apache.flink.statefun.e2e.remote/counter
+
+#      - ingress:
+#          meta:
+#            type: io.statefun.kafka/ingress
+#            id: org.apache.flink.statefun.e2e.remote/invoke-kafka
+#          spec:
+#            address: kafka-broker:9092
+#            consumerGroupId: remote-module-e2e
+#            startupPosition:
+#              type: earliest
+#            topics:
+#              - topic: invoke
+#                valueType: statefun.e2e/org.apache.flink.statefun.e2e.remote.Invoke
+#                targets:
+#                  - org.apache.flink.statefun.e2e.remote/counter
     egresses:
       - egress:
           meta:
@@ -51,5 +68,6 @@ module:
           spec:
             address: kafka-broker:9092
             deliverySemantic:
-              type: exactly-once
+#              type: exactly-once
+              type: at-least-once
               transactionTimeout: 15min
