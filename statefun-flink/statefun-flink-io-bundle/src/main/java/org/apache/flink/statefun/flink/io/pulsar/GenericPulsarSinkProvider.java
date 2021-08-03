@@ -33,9 +33,9 @@ import org.apache.flink.statefun.sdk.kafka.KafkaEgressSpec;
 import org.apache.flink.statefun.sdk.reqreply.generated.TypedValue;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 
-final class GenericKafkaSinkProvider implements SinkProvider {
+final class GenericPulsarSinkProvider implements SinkProvider {
 
-  private final KafkaSinkProvider delegateProvider = new KafkaSinkProvider();
+  private final PulsarSinkProvider delegateProvider = new PulsarSinkProvider();
 
   @Override
   public <T> SinkFunction<T> forSpec(EgressSpec<T> spec) {

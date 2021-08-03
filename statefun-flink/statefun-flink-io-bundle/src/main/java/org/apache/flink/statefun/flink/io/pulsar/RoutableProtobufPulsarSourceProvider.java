@@ -17,7 +17,6 @@
  */
 package org.apache.flink.statefun.flink.io.pulsar;
 
-import static org.apache.flink.statefun.flink.io.pulsar.PulsarIngressSpecJsonParser.optionalAutoOffsetResetPosition;
 import static org.apache.flink.statefun.flink.io.pulsar.PulsarIngressSpecJsonParser.optionalStartupPosition;
 import static org.apache.flink.statefun.flink.io.pulsar.PulsarIngressSpecJsonParser.optionalSubscription;
 import static org.apache.flink.statefun.flink.io.pulsar.PulsarIngressSpecJsonParser.pulsarAdminUrl;
@@ -34,10 +33,10 @@ import org.apache.flink.statefun.flink.io.spi.JsonIngressSpec;
 import org.apache.flink.statefun.flink.io.spi.SourceProvider;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressBuilder;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressBuilderApiExtension;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressDeserializer;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilder;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilderApiExtension;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressSpec;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 
 final class RoutableProtobufPulsarSourceProvider implements SourceProvider {
@@ -79,7 +78,6 @@ final class RoutableProtobufPulsarSourceProvider implements SourceProvider {
         .withTopics(new ArrayList<>(routableTopics.keySet()));
 
     optionalSubscription(json).ifPresent(pulsarIngressBuilder::withSubscription);
-    optionalAutoOffsetResetPosition(json).ifPresent(pulsarIngressBuilder::withAutoResetPosition);
     optionalStartupPosition(json).ifPresent(pulsarIngressBuilder::withStartupPosition);
 
     PulsarIngressBuilderApiExtension.withDeserializer(

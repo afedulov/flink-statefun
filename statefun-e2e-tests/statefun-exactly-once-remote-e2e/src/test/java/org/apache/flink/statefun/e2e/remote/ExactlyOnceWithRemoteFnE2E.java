@@ -100,6 +100,7 @@ public class ExactlyOnceWithRemoteFnE2E {
           .dependsOn(remoteFunction)
           .exposeMasterLogs(LOG)
           .withBuildContextFileFromClasspath("remote-module", "/remote-module/")
+          .withBuildContextFileFromClasspath("Dockerfile", "Dockerfile")
           .build();
 
   @Test(timeout = 1000 * 60 * 10)

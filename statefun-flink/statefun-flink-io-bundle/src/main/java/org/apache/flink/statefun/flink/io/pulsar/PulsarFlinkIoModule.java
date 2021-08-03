@@ -35,8 +35,8 @@ public final class PulsarFlinkIoModule implements FlinkIoModule {
         ProtobufPulsarIngressTypes.ROUTABLE_PROTOBUF_PULSAR_INGRESS_TYPE,
         new RoutableProtobufPulsarSourceProvider());
 
-    //    binder.bindSinkProvider(Constants.KAFKA_EGRESS_TYPE, new KafkaSinkProvider());
-    //    binder.bindSinkProvider(
-    //        KafkaEgressTypes.GENERIC_KAFKA_EGRESS_TYPE, new GenericKafkaSinkProvider());
+    binder.bindSinkProvider(PulsarEgressTypes.GENERIC_PULSAR_EGRESS_TYPE, new PulsarSinkProvider());
+    binder.bindSinkProvider(
+        KafkaEgressTypes.GENERIC_KAFKA_EGRESS_TYPE, new GenericPulsarSinkProvider());
   }
 }

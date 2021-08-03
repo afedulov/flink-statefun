@@ -18,8 +18,8 @@ public class Main {
         //
         // .withSupplyingIngress(com.apache.flink.statefun.e2e.remote.Constants.IN_MEMORY_TEST_INGRESS, new
         //                         Utils.CyclingInMemoryIngress(inputMessages))
-        .withPrintingEgress(
-            new EgressIdentifier("com.github.knaufk.demo", "kafka-egress", TypedValue.class))
+//        .withPrintingEgress(
+//            new EgressIdentifier("com.github.knaufk.demo", "kafka-egress", TypedValue.class))
         .withConfiguration("restart-strategy", "failure-rate")
         .withConfiguration("restart-strategy.failure-rate.max-failures-per-interval", "1000")
         .withConfiguration("restart-strategy.failure-rate.failure-rate-interval", "5 min")

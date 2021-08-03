@@ -97,6 +97,7 @@ public final class KafkaIOVerifier<PK, PV, CK, CV> {
     CompletableFuture.runAsync(
         () -> {
           for (ProducerRecord<PK, PV> input : assertionInputs) {
+            System.out.println("SEND >> " + input);
             producer.send(input);
           }
           producer.flush();
@@ -169,6 +170,7 @@ public final class KafkaIOVerifier<PK, PV, CK, CV> {
         try {
           while (!expectedResultsList.isEmpty()) {
             CV output = outputHandoff.take();
+            System.out.println("HANDOFF >> " + output);
             if (!checkAndRemoveIfMatch(expectedResultsList, output)) {
               return false;
             }

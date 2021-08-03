@@ -43,19 +43,32 @@ module:
             admin-url: http://localhost:8080
             subscription: my-subscription
             startupPosition:
-              type: latest
+              type: earliest
             topics:
               - topic: persistent://public/default/invoke
                 valueType: com.example/RestockItem
                 targets:
                   - com.example/stock
+
     egresses:
       - egress:
           meta:
-            type: io.statefun.kafka/egress
+            type: io.statefun.pulsar/egress
             id: org.apache.flink.statefun.e2e.remote/invoke-results
           spec:
-            address: localhost:9092
+            service-url: pulsar://localhost:6650
+            admin-url: http://localhost:8080
             deliverySemantic:
               type: exactly-once
               transactionTimeout: 15min
+
+#    egresses:
+#      - egress:
+#          meta:
+#            type: io.statefun.kafka/egress
+#            id: org.apache.flink.statefun.e2e.remote/invoke-results
+#          spec:
+#            address: localhost:9092
+#            deliverySemantic:
+#              type: exactly-once
+#              transactionTimeout: 15min

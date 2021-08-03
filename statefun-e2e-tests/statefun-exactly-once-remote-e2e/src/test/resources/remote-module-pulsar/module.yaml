@@ -60,6 +60,8 @@ module:
 #                valueType: statefun.e2e/org.apache.flink.statefun.e2e.remote.Invoke
 #                targets:
 #                  - org.apache.flink.statefun.e2e.remote/counter
+
+
     egresses:
       - egress:
           meta:
@@ -68,6 +70,6 @@ module:
           spec:
             address: kafka-broker:9092
             deliverySemantic:
-#              type: exactly-once
-              type: at-least-once
+              type: exactly-once
+#              type: at-least-once
               transactionTimeout: 15min

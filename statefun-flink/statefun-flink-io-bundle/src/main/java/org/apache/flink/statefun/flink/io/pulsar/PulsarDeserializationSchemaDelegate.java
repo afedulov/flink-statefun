@@ -20,7 +20,7 @@ package org.apache.flink.statefun.flink.io.pulsar;
 import java.util.Objects;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.statefun.flink.common.UnimplementedTypeInfo;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressDeserializer;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
 import org.apache.flink.streaming.util.serialization.PulsarDeserializationSchema;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.Schema;

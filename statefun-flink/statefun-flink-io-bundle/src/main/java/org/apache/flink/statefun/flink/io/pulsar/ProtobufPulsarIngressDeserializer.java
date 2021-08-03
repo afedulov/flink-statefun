@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.apache.flink.statefun.flink.common.ResourceLocator;
 import org.apache.flink.statefun.flink.common.protobuf.ProtobufDescriptorMap;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressDeserializer;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
 
 final class ProtobufPulsarIngressDeserializer implements PulsarIngressDeserializer<Message> {
 

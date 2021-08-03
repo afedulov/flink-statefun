@@ -27,7 +27,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 /**
  * A {@link KafkaEgressSerializer} used solely by sinks provided by the {@link
- * GenericKafkaSinkProvider}.
+ * GenericPulsarSinkProvider}.
  *
  * <p>This serializer expects Protobuf messages of type {@link KafkaProducerRecord}, and simply
  * transforms those into Kafka's {@link ProducerRecord}.

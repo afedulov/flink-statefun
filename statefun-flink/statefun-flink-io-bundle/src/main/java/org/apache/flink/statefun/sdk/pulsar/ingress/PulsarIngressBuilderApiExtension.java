@@ -15,26 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.statefun.flink.io.pulsar;
+package org.apache.flink.statefun.sdk.pulsar.ingress;
 
-import java.util.Objects;
-import javax.annotation.Nullable;
-import org.apache.flink.statefun.sdk.kafka.KafkaEgressSerializer;
-import org.apache.flink.streaming.connectors.kafka.KafkaSerializationSchema;
-import org.apache.kafka.clients.producer.ProducerRecord;
-
-final class KafkaSerializationSchemaDelegate<T> implements KafkaSerializationSchema<T> {
-
-  private static final long serialVersionUID = 1L;
-
-  private final KafkaEgressSerializer<T> serializer;
-
-  KafkaSerializationSchemaDelegate(KafkaEgressSerializer<T> serializer) {
-    this.serializer = Objects.requireNonNull(serializer);
-  }
-
-  @Override
-  public ProducerRecord<byte[], byte[]> serialize(T t, @Nullable Long aLong) {
-    return serializer.serialize(t);
+public class PulsarIngressBuilderApiExtension {
+  public static <T> void withDeserializer(
+      PulsarIngressBuilder<T> pulsarIngressBuilder, PulsarIngressDeserializer<T> deserializer) {
+    pulsarIngressBuilder.withDeserializer(deserializer);
   }
 }

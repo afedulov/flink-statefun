@@ -20,13 +20,13 @@ package org.apache.flink.statefun.flink.io.pulsar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.flink.statefun.flink.io.pulsar.PulsarDeserializationSchemaDelegate;
 import org.apache.flink.statefun.flink.io.spi.SourceProvider;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
-import org.apache.flink.statefun.sdk.kafka.KafkaIngressStartupPosition;
 import org.apache.flink.statefun.sdk.kafka.KafkaTopicPartition;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressStartupPosition;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.streaming.connectors.pulsar.FlinkPulsarSource;
 import org.apache.flink.streaming.util.serialization.PulsarDeserializationSchema;
 
@@ -38,34 +38,11 @@ public class PulsarSourceProvider implements SourceProvider {
     Properties propsTest = spec.properties();
 
     PulsarDeserializationSchema<T> schema = deserializationSchemaFromSpec(spec);
-    //    PulsarDeserializationSchema<T> schema =
-    //            (PulsarDeserializationSchema<T>) PulsarDeserializationSchema
-    //            .valueOnly(new SimpleStringSchema());
 
     FlinkPulsarSource<T> source =
         new FlinkPulsarSource<>(spec.serviceUrl(), spec.adminUrl(), schema, propsTest);
 
-    /*    PulsarIngressSpec<T> spec = asPulsarSpec(ingressSpec);
-        Properties propsTest = spec.properties();
-        PulsarDeserializationSchema<T> tPulsarDeserializationSchema = deserializationSchemaFromSpec(spec);
-
-        String PULSAR_SERVICE_URL = "pulsar://localhost:6650";
-        String PULSAR_ADMIN_URL = "http://localhost:8080";
-
-
-        Properties props = new Properties();
-        props.setProperty("topic", "invoke");
-    //    props.setProperty("partition.discovery.interval-millis", "5000");
-
-        PulsarDeserializationSchema<T> schema = (PulsarDeserializationSchema<T>) PulsarDeserializationSchema
-                .valueOnly(new SimpleStringSchema());
-
-        FlinkPulsarSource<T> source = new FlinkPulsarSource<>(PULSAR_SERVICE_URL, PULSAR_ADMIN_URL, schema, props);
-
-    // or setStartFromLatest、setStartFromSpecificOffsets、setStartFromSubscription
-    //    source.setStartFromEarliest();
-        source.setStartFromLatest();*/
-
+    configureStartupPosition(source, spec.startupPosition());
     return source;
   }
 
@@ -80,8 +57,16 @@ public class PulsarSourceProvider implements SourceProvider {
   }
 
   private static <T> void configureStartupPosition(
-      FlinkKafkaConsumer<T> consumer, KafkaIngressStartupPosition startupPosition) {
-    if (startupPosition.isGroupOffsets()) {
+      FlinkPulsarSource<T> source, PulsarIngressStartupPosition startupPosition) {
+
+    // TODO: add missing
+    if (startupPosition.isEarliest()) {
+      source.setStartFromEarliest();
+    } else if (startupPosition.isLatest()) {
+      source.setStartFromLatest();
+    }
+
+    /*if (startupPosition.isGroupOffsets()) {
       consumer.setStartFromGroupOffsets();
     } else if (startupPosition.isEarliest()) {
       consumer.setStartFromEarliest();
@@ -97,7 +82,7 @@ public class PulsarSourceProvider implements SourceProvider {
       consumer.setStartFromTimestamp(datePosition.epochMilli());
     } else {
       throw new IllegalStateException("Safe guard; should not occur");
-    }
+    }*/
   }
 
   private <T> PulsarDeserializationSchema<T> deserializationSchemaFromSpec(

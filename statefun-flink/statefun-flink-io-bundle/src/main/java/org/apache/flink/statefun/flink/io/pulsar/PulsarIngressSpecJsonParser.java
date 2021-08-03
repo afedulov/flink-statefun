@@ -18,9 +18,6 @@
 
 package org.apache.flink.statefun.flink.io.pulsar;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,10 +32,10 @@ import org.apache.flink.statefun.flink.common.json.NamespaceNamePair;
 import org.apache.flink.statefun.flink.common.json.Selectors;
 import org.apache.flink.statefun.flink.io.generated.RoutingConfig;
 import org.apache.flink.statefun.flink.io.generated.TargetFunctionType;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressAutoResetPosition;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressDeserializer;
-import org.apache.flink.statefun.sdk.pulsar.PulsarIngressStartupPosition;
 import org.apache.flink.statefun.sdk.pulsar.PulsarTopicPartition;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressAutoResetPosition;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressStartupPosition;
 
 final class PulsarIngressSpecJsonParser {
 
@@ -63,17 +60,11 @@ final class PulsarIngressSpecJsonParser {
       JsonPointer.compile("/ingress/spec/startupPosition/type");
   private static final JsonPointer STARTUP_SPECIFIC_OFFSETS_POINTER =
       JsonPointer.compile("/ingress/spec/startupPosition/offsets");
-  private static final JsonPointer STARTUP_DATE_POINTER =
-      JsonPointer.compile("/ingress/spec/startupPosition/date");
 
   private static final JsonPointer ROUTABLE_TOPIC_NAME_POINTER = JsonPointer.compile("/topic");
   private static final JsonPointer ROUTABLE_TOPIC_VALUE_TYPE_POINTER =
       JsonPointer.compile("/valueType");
   private static final JsonPointer ROUTABLE_TOPIC_TARGETS_POINTER = JsonPointer.compile("/targets");
-
-  private static final String STARTUP_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS Z";
-  private static final DateTimeFormatter STARTUP_DATE_FORMATTER =
-      DateTimeFormatter.ofPattern(STARTUP_DATE_PATTERN);
 
   static List<String> topics(JsonNode json) {
     return Selectors.textListAt(json, TOPICS_POINTER);
@@ -154,8 +145,8 @@ final class PulsarIngressSpecJsonParser {
     String startupType =
         Selectors.textAt(json, STARTUP_POS_TYPE_POINTER).toLowerCase(Locale.ENGLISH);
     switch (startupType) {
-      case "group-offsets":
-        return Optional.of(PulsarIngressStartupPosition.fromGroupOffsets());
+      case "external-subscription":
+        return Optional.of(PulsarIngressStartupPosition.fromExternalSubscription());
       case "earliest":
         return Optional.of(PulsarIngressStartupPosition.fromEarliest());
       case "latest":
@@ -163,13 +154,11 @@ final class PulsarIngressSpecJsonParser {
       case "specific-offsets":
         return Optional.of(
             PulsarIngressStartupPosition.fromSpecificOffsets(specificOffsetsStartupMap(json)));
-      case "date":
-        return Optional.of(PulsarIngressStartupPosition.fromDate(startupDate(json)));
       default:
         throw new IllegalArgumentException(
             "Invalid startup position type: "
                 + startupType
-                + "; valid values are [group-offsets, earliest, latest, specific-offsets, date]");
+                + "; valid values are [external-subscription, earliest, latest, specific-offsets]");
     }
   }
 
@@ -180,20 +169,6 @@ final class PulsarIngressSpecJsonParser {
         (partition, offset) ->
             offsets.put(PulsarTopicPartition.fromString(partition), validateOffsetLong(offset)));
     return offsets;
-  }
-
-  private static ZonedDateTime startupDate(JsonNode json) {
-    String dateStr = Selectors.textAt(json, STARTUP_DATE_POINTER);
-    try {
-      return ZonedDateTime.parse(dateStr, STARTUP_DATE_FORMATTER);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException(
-          "Unable to parse date string for startup position: "
-              + dateStr
-              + "; the date should conform to the pattern "
-              + STARTUP_DATE_PATTERN,
-          e);
-    }
   }
 
   private static Long validateOffsetLong(Long offset) {
