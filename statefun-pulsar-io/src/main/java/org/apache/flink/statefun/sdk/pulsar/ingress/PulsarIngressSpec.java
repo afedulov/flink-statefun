@@ -15,13 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.statefun.sdk.pulsar;
+package org.apache.flink.statefun.sdk.pulsar.ingress;
 
 import java.util.Objects;
 import java.util.Properties;
 import org.apache.flink.statefun.sdk.IngressType;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.Constants;
+import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
 
 public class PulsarIngressSpec<T> implements IngressSpec<T> {
   private final Properties properties;
@@ -81,7 +83,7 @@ public class PulsarIngressSpec<T> implements IngressSpec<T> {
   private static Properties requireValidProperties(Properties properties) {
     Objects.requireNonNull(properties);
 
-    if (!properties.containsKey(PulsarConsumerConfig.SERVICE_URL)) {
+    if (!properties.containsKey(PulsarConfig.SERVICE_URL)) {
       throw new IllegalArgumentException("Missing setting for Pulsar address.");
     }
 
@@ -97,16 +99,16 @@ public class PulsarIngressSpec<T> implements IngressSpec<T> {
   }
 
   private static void requireTopicSetting(Properties properties) {
-    if (properties.get(PulsarConsumerConfig.TOPIC_SINGLE_OPTION_KEY) == null
-        && properties.get(PulsarConsumerConfig.TOPIC_MULTI_OPTION_KEY) == null
-        && properties.get(PulsarConsumerConfig.TOPIC_PATTERN_OPTION_KEY) == null) {
+    if (properties.get(PulsarConfig.TOPIC_SINGLE_OPTION_KEY) == null
+        && properties.get(PulsarConfig.TOPIC_MULTI_OPTION_KEY) == null
+        && properties.get(PulsarConfig.TOPIC_PATTERN_OPTION_KEY) == null) {
       throw new IllegalArgumentException("Must define at least one Pulsar topic to consume from.");
     }
   }
 
   private static PulsarIngressStartupPosition requireValidStartupPosition(
       PulsarIngressStartupPosition startupPosition, Properties properties) {
-    if (startupPosition.isGroupOffsets()) {
+    if (startupPosition.isExternalSubscription()) {
       // TODO: Check which properties are needed for Pulsar?
       //        && !properties.containsKey(ConsumerConfig.GROUP_ID_CONFIG)) {
       throw new IllegalStateException(

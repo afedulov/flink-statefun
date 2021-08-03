@@ -26,6 +26,10 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Properties;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilder;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressStartupPosition;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.Test;
 
@@ -77,8 +81,7 @@ public class PulsarIngressBuilderTest {
     PulsarIngressSpec<String> spec = builder.build();
 
     // TODO: test for patterns and multiple topics setting.
-    String topicSetting =
-        spec.properties().getProperty(PulsarConsumerConfig.TOPIC_SINGLE_OPTION_KEY);
+    String topicSetting = spec.properties().getProperty(PulsarConfig.TOPIC_SINGLE_OPTION_KEY);
     assertThat(topicSetting, is("topic"));
   }
 
@@ -126,9 +129,7 @@ public class PulsarIngressBuilderTest {
 
     assertThat(
         spec.properties(),
-        allOf(
-            isMapOfSize(3),
-            hasProperty(PulsarConsumerConfig.SERVICE_URL, "pulsar://localhost:6650")));
+        allOf(isMapOfSize(3), hasProperty(PulsarConfig.SERVICE_URL, "pulsar://localhost:6650")));
 
     // TODO: add required parameters for pulsar
     //   hasProperty(ConsumerConfig.GROUP_ID_CONFIG, "test-group"),
@@ -138,7 +139,7 @@ public class PulsarIngressBuilderTest {
   @Test
   public void namedMethodConfigValuesOverwriteProperties() {
     Properties properties = new Properties();
-    properties.setProperty(PulsarConsumerConfig.SERVICE_URL, "should-be-overwritten");
+    properties.setProperty(PulsarConfig.SERVICE_URL, "should-be-overwritten");
 
     PulsarIngressBuilder<String> builder =
         PulsarIngressBuilder.forIdentifier(DUMMY_ID)
@@ -151,9 +152,7 @@ public class PulsarIngressBuilderTest {
 
     PulsarIngressSpec<String> spec = builder.build();
 
-    assertThat(
-        spec.properties(),
-        hasProperty(PulsarConsumerConfig.SERVICE_URL, "pulsar://localhost:6650"));
+    assertThat(spec.properties(), hasProperty(PulsarConfig.SERVICE_URL, "pulsar://localhost:6650"));
   }
 
   @Test

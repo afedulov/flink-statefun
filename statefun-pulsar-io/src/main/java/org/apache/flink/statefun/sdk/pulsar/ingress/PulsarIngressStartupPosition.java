@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.statefun.sdk.pulsar;
+package org.apache.flink.statefun.sdk.pulsar.ingress;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
+import org.apache.flink.statefun.sdk.pulsar.PulsarTopicPartition;
 
 /** Position for the ingress to start consuming Pulsar partitions. */
 @SuppressWarnings("WeakerAccess, unused")
@@ -28,13 +29,14 @@ public class PulsarIngressStartupPosition {
   private PulsarIngressStartupPosition() {}
 
   /**
-   * Start consuming from committed consumer group offsets in Pulsar.
+   * Start consuming from committed subscription offsets in Pulsar.
    *
-   * <p>Note that a consumer group id must be provided for this startup mode. Please see {@link
-   * PulsarIngressBuilder#withConsumerGroupId(String)}.
+   * <p>Note that a subscription name must be provided for this startup mode. Please see {@link
+   * PulsarIngressBuilder#withSubscription(String)} (String)}. If a specified offset does not exist
+   * for a partition, the position for that partition will * fallback to //TODO check default!
    */
-  public static PulsarIngressStartupPosition fromGroupOffsets() {
-    return GroupOffsetsPosition.INSTANCE;
+  public static PulsarIngressStartupPosition fromExternalSubscription() {
+    return ExternalSubscriptionPosition.INSTANCE;
   }
 
   /** Start consuming from the earliest offset possible. */
@@ -51,8 +53,7 @@ public class PulsarIngressStartupPosition {
    * Start consuming from a specified set of offsets.
    *
    * <p>If a specified offset does not exist for a partition, the position for that partition will
-   * fallback to the reset position configured via {@link
-   * PulsarIngressBuilder#withAutoResetPosition(PulsarIngressAutoResetPosition)}.
+   * fallback to //TODO check default!
    *
    * @param specificOffsets map of specific set of offsets.
    */
@@ -64,24 +65,9 @@ public class PulsarIngressStartupPosition {
     return new SpecificOffsetsPosition(specificOffsets);
   }
 
-  /**
-   * Start consuming from offsets with ingestion timestamps after or equal to a specified {@link
-   * ZonedDateTime}.
-   *
-   * <p>If a Pulsar partition does not have any records with ingestion timestamps after or equal to
-   * the specified date, the position for that partition will fallback to the reset position
-   * configured via {@link
-   * PulsarIngressBuilder#withAutoResetPosition(PulsarIngressAutoResetPosition)}.
-   */
-  public static PulsarIngressStartupPosition fromDate(ZonedDateTime date) {
-    return new DatePosition(date);
-  }
-
-  /**
-   * Checks whether this position is configured using committed consumer group offsets in Pulsar.
-   */
-  public boolean isGroupOffsets() {
-    return getClass() == GroupOffsetsPosition.class;
+  /** Checks whether this position is configured using committed subscription offsets in Pulsar. */
+  public boolean isExternalSubscription() {
+    return getClass() == ExternalSubscriptionPosition.class;
   }
 
   /** Checks whether this position is configured using the earliest offset. */
@@ -99,11 +85,6 @@ public class PulsarIngressStartupPosition {
     return getClass() == SpecificOffsetsPosition.class;
   }
 
-  /** Checks whether this position is configured using a date. */
-  public boolean isDate() {
-    return getClass() == DatePosition.class;
-  }
-
   /** Returns this position as a {@link SpecificOffsetsPosition}. */
   public SpecificOffsetsPosition asSpecificOffsets() {
     if (!isSpecificOffsets()) {
@@ -113,23 +94,15 @@ public class PulsarIngressStartupPosition {
     return (SpecificOffsetsPosition) this;
   }
 
-  /** Returns this position as a {@link DatePosition}. */
-  public DatePosition asDate() {
-    if (!isDate()) {
-      throw new IllegalStateException("This is not a startup position configured using a Date.");
-    }
-    return (DatePosition) this;
-  }
+  public static final class ExternalSubscriptionPosition extends PulsarIngressStartupPosition {
 
-  public static final class GroupOffsetsPosition extends PulsarIngressStartupPosition {
+    private static final ExternalSubscriptionPosition INSTANCE = new ExternalSubscriptionPosition();
 
-    private static final GroupOffsetsPosition INSTANCE = new GroupOffsetsPosition();
-
-    private GroupOffsetsPosition() {}
+    private ExternalSubscriptionPosition() {}
 
     @Override
     public boolean equals(Object obj) {
-      return obj != null && obj instanceof GroupOffsetsPosition;
+      return obj != null && obj instanceof ExternalSubscriptionPosition;
     }
 
     @Override

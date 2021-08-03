@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.statefun.sdk.pulsar;
+package org.apache.flink.statefun.sdk.pulsar.ingress;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +25,8 @@ import java.util.Properties;
 import org.apache.flink.statefun.sdk.annotations.ForRuntime;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
+import org.apache.flink.statefun.sdk.pulsar.OptionalConfig;
+import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
 
 /**
  * A builder for creating an {@link IngressSpec} for consuming data from Apache Pulsar.
@@ -36,19 +38,21 @@ public final class PulsarIngressBuilder<T> {
   private final IngressIdentifier<T> id;
   private final Properties properties = new Properties();
 
-  private OptionalConfig<String> serviceUrl =
-      OptionalConfig.withoutDefault(PulsarConsumerConfig.SERVICE_URL);
-  private OptionalConfig<String> adminUrl =
-      OptionalConfig.withoutDefault(PulsarConsumerConfig.ADMIN_URL);
-  private OptionalConfig<String> subscription =
-      OptionalConfig.withoutDefault(PulsarConsumerConfig.SUBSCRIPTION_NAME);
-  private OptionalConfig<PulsarIngressStartupPosition> startupPosition =
+  private final OptionalConfig<String> serviceUrl =
+      OptionalConfig.withoutDefault(PulsarConfig.SERVICE_URL);
+  private final OptionalConfig<String> adminUrl =
+      OptionalConfig.withoutDefault(PulsarConfig.ADMIN_URL);
+  private final OptionalConfig<String> subscription =
+      OptionalConfig.withoutDefault(PulsarConfig.SUBSCRIPTION_NAME);
+  private final OptionalConfig<PulsarIngressStartupPosition> startupPosition =
       OptionalConfig.withDefault(PulsarIngressStartupPosition.fromLatest());
+
+  // TODO: not directly available in FlinkPulsarSource. Check what happens.
+  //  private final OptionalConfig<PulsarIngressAutoResetPosition> autoResetPosition =
+  //      OptionalConfig.withDefault(PulsarIngressAutoResetPosition.LATEST);
 
   private OptionalConfig<PulsarIngressDeserializer<T>> deserializer =
       OptionalConfig.withoutDefault();
-  private OptionalConfig<PulsarIngressAutoResetPosition> autoResetPosition =
-      OptionalConfig.withDefault(PulsarIngressAutoResetPosition.LATEST);
 
   private PulsarIngressBuilder(IngressIdentifier<T> id) {
     this.id = Objects.requireNonNull(id);
@@ -83,13 +87,13 @@ public final class PulsarIngressBuilder<T> {
 
   /** @param topic The name of the topic that should be consumed. */
   public PulsarIngressBuilder<T> withTopic(String topic) {
-    return withProperty(PulsarConsumerConfig.TOPIC_SINGLE_OPTION_KEY, topic);
+    return withProperty(PulsarConfig.TOPIC_SINGLE_OPTION_KEY, topic);
   }
 
   /** @param topicsList A list of topics that should be consumed. */
   public PulsarIngressBuilder<T> withTopics(List<String> topicsList) {
     String topics = String.join(",", topicsList);
-    return withProperty(PulsarConsumerConfig.TOPIC_MULTI_OPTION_KEY, topics);
+    return withProperty(PulsarConfig.TOPIC_MULTI_OPTION_KEY, topics);
   }
 
   /** A configuration property for the PulsarConsumer. */
@@ -114,16 +118,6 @@ public final class PulsarIngressBuilder<T> {
       Class<? extends PulsarIngressDeserializer<T>> deserializerClass) {
     Objects.requireNonNull(deserializerClass);
     this.deserializer.set(instantiateDeserializer(deserializerClass));
-    return this;
-  }
-
-  /**
-   * @param autoResetPosition the auto offset reset position to use, in case consumed offsets are
-   *     invalid.
-   */
-  public PulsarIngressBuilder<T> withAutoResetPosition(
-      PulsarIngressAutoResetPosition autoResetPosition) {
-    this.autoResetPosition.set(autoResetPosition);
     return this;
   }
 
@@ -159,16 +153,15 @@ public final class PulsarIngressBuilder<T> {
     Properties resultProps = new Properties();
     resultProps.putAll(properties);
 
-    // for all configuration passed using named methods, overwrite corresponding properties
-    serviceUrl.overwritePropertiesIfPresent(resultProps, PulsarConsumerConfig.SERVICE_URL);
-    // TODO: check if needed in properties (see FlinkPulsarSource constructors)
-    adminUrl.overwritePropertiesIfPresent(resultProps, PulsarConsumerConfig.ADMIN_URL);
+    // for all String parameters passed using named methods, overwrite corresponding properties
+    serviceUrl.overwritePropertiesIfPresent(resultProps, PulsarConfig.SERVICE_URL);
+    adminUrl.overwritePropertiesIfPresent(resultProps, PulsarConfig.ADMIN_URL);
+    subscription.overwritePropertiesIfPresent(resultProps, PulsarConfig.SUBSCRIPTION_NAME);
 
     //    TODO: which options need to be considered here?
     //     .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
     //    autoResetPosition.overwritePropertiesIfPresent(
     //        resultProps, ConsumerConfig.AUTO_OFFSET_RESET_CONFIG);
-    //    consumerGroupId.overwritePropertiesIfPresent(resultProps, ConsumerConfig.GROUP_ID_CONFIG);
 
     return resultProps;
   }

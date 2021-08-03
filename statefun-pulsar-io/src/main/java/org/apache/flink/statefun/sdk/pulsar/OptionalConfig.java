@@ -27,40 +27,40 @@ import javax.annotation.Nullable;
  *
  * @param <T> type of the configuration value.
  */
-final class OptionalConfig<T> {
+public final class OptionalConfig<T> {
 
   private final T defaultValue;
   private T value;
   private String name;
 
-  static <T> OptionalConfig<T> withDefault(T defaultValue) {
+  public static <T> OptionalConfig<T> withDefault(T defaultValue) {
     Objects.requireNonNull(defaultValue);
     return new OptionalConfig<>(null, defaultValue);
   }
 
-  static <T> OptionalConfig<T> withoutDefault() {
+  public static <T> OptionalConfig<T> withoutDefault() {
     return new OptionalConfig<>(null, null);
   }
 
-  static <T> OptionalConfig<T> withDefault(String name, T defaultValue) {
+  public static <T> OptionalConfig<T> withDefault(String name, T defaultValue) {
     Objects.requireNonNull(defaultValue);
     return new OptionalConfig<>(name, defaultValue);
   }
 
-  static <T> OptionalConfig<T> withoutDefault(String name) {
+  public static <T> OptionalConfig<T> withoutDefault(String name) {
     return new OptionalConfig<>(name, null);
   }
 
-  private OptionalConfig(@Nullable String name, @Nullable T defaultValue) {
+  public OptionalConfig(@Nullable String name, @Nullable T defaultValue) {
     this.name = name;
     this.defaultValue = defaultValue;
   }
 
-  void set(T value) {
+  public void set(T value) {
     this.value = Objects.requireNonNull(value);
   }
 
-  T get() {
+  public T get() {
     if (!isSet() && !hasDefault()) {
       if (hasName()) {
         throw new NoSuchElementException(
@@ -75,7 +75,7 @@ final class OptionalConfig<T> {
     return isSet() ? value : defaultValue;
   }
 
-  void overwritePropertiesIfPresent(Properties properties, String key) {
+  public void overwritePropertiesIfPresent(Properties properties, String key) {
     if (isSet() || (!properties.containsKey(key) && hasDefault())) {
       properties.setProperty(key, get().toString());
     }

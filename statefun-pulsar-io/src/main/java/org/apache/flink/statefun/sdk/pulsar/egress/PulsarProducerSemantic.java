@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.statefun.sdk.pulsar;
+package org.apache.flink.statefun.sdk.pulsar.egress;
 
 public enum PulsarProducerSemantic {
   EXACTLY_ONCE,

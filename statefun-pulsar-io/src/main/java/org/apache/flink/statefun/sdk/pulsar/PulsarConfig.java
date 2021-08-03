@@ -19,7 +19,7 @@ import org.apache.pulsar.common.naming.TopicName;
 import org.apache.pulsar.shade.com.google.common.collect.ImmutableSet;
 
 /** A collection of constants to talk to Pulsar. */
-public class PulsarConsumerConfig {
+public class PulsarConfig {
 
   public static final String SERVICE_URL = "service-url";
   public static final String ADMIN_URL = "admin-url";

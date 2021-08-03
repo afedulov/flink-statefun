@@ -37,21 +37,6 @@ under the License.
             <artifactId>statefun-sdk-embedded</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-            <exclusions>
-                <!-- This collides with snappy-java brought from  
-                        org.apache.flink:flink-streaming-java_${scala.binary.version}
-                            org.xerial.snappy:snappy-java:1.1.4
-                -->
-                <exclusion>
-                    <groupId>org.xerial.snappy</groupId>
-                    <artifactId>snappy-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.pulsar</groupId>

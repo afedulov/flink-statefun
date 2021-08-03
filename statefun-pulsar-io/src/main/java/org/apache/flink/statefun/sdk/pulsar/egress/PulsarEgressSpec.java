@@ -24,29 +24,31 @@ import org.apache.flink.statefun.sdk.EgressType;
 import org.apache.flink.statefun.sdk.io.EgressIdentifier;
 import org.apache.flink.statefun.sdk.io.EgressSpec;
 import org.apache.flink.statefun.sdk.pulsar.Constants;
-import org.apache.flink.statefun.sdk.pulsar.PulsarProducerSemantic;
 
 public final class PulsarEgressSpec<OutT> implements EgressSpec<OutT> {
-  private final Class<? extends PulsarEgressSerializer<OutT>> serializer;
-  private final String pulsarAddress;
-  private final Properties properties;
   private final EgressIdentifier<OutT> id;
+  private final Properties properties;
+  private final String adminUrl;
+  private final String serviceUrl;
   private final int pulsarProducerPoolSize;
   private final PulsarProducerSemantic semantic;
+  private final Class<? extends PulsarEgressSerializer<OutT>> serializer;
   private final Duration transactionTimeoutDuration;
 
   PulsarEgressSpec(
       EgressIdentifier<OutT> id,
-      Class<? extends PulsarEgressSerializer<OutT>> serializer,
-      String pulsarAddress,
       Properties properties,
+      String serviceUrl,
+      String adminUrl,
       int pulsarProducerPoolSize,
       PulsarProducerSemantic semantic,
+      Class<? extends PulsarEgressSerializer<OutT>> serializer,
       Duration transactionTimeoutDuration) {
-    this.serializer = Objects.requireNonNull(serializer);
-    this.pulsarAddress = Objects.requireNonNull(pulsarAddress);
-    this.properties = Objects.requireNonNull(properties);
     this.id = Objects.requireNonNull(id);
+    this.properties = Objects.requireNonNull(properties);
+    this.serviceUrl = Objects.requireNonNull(serviceUrl);
+    this.adminUrl = Objects.requireNonNull(adminUrl);
+    this.serializer = Objects.requireNonNull(serializer);
     this.pulsarProducerPoolSize = pulsarProducerPoolSize;
     this.semantic = Objects.requireNonNull(semantic);
     this.transactionTimeoutDuration = Objects.requireNonNull(transactionTimeoutDuration);
@@ -66,8 +68,12 @@ public final class PulsarEgressSpec<OutT> implements EgressSpec<OutT> {
     return serializer;
   }
 
-  public String pulsarAddress() {
-    return pulsarAddress;
+  public String serviceUrl() {
+    return serviceUrl;
+  }
+
+  public String adminUrl() {
+    return adminUrl;
   }
 
   public Properties properties() {

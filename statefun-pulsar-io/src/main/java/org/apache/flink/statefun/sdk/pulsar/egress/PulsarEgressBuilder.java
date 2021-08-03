@@ -22,7 +22,9 @@ import java.util.Objects;
 import java.util.Properties;
 import org.apache.flink.statefun.sdk.io.EgressIdentifier;
 import org.apache.flink.statefun.sdk.io.EgressSpec;
-import org.apache.flink.statefun.sdk.pulsar.PulsarProducerSemantic;
+import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
+import org.apache.flink.statefun.sdk.pulsar.OptionalConfig;
+import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilder;
 
 /**
  * A builder class for creating an {@link EgressSpec} that writes data out to a Pulsar cluster. By
@@ -31,12 +33,18 @@ import org.apache.flink.statefun.sdk.pulsar.PulsarProducerSemantic;
  * @param <OutT> The type written out to the cluster by the Egress.
  */
 public final class PulsarEgressBuilder<OutT> {
+
   private final EgressIdentifier<OutT> id;
-  private Class<? extends PulsarEgressSerializer<OutT>> serializer;
-  private String pulsarAddress;
   private Properties properties = new Properties();
+
+  private final OptionalConfig<String> serviceUrl =
+      OptionalConfig.withoutDefault(PulsarConfig.SERVICE_URL);
+  private final OptionalConfig<String> adminUrl =
+      OptionalConfig.withoutDefault(PulsarConfig.ADMIN_URL);
+
   private int pulsarProducerPoolSize = 5;
   private PulsarProducerSemantic semantic = PulsarProducerSemantic.AT_LEAST_ONCE;
+  private Class<? extends PulsarEgressSerializer<OutT>> serializer;
   private Duration transactionTimeoutDuration = Duration.ZERO;
 
   private PulsarEgressBuilder(EgressIdentifier<OutT> id) {
@@ -53,9 +61,15 @@ public final class PulsarEgressBuilder<OutT> {
     return new PulsarEgressBuilder<>(egressIdentifier);
   }
 
-  /** @param pulsarAddress Comma separated addresses of the brokers. */
-  public PulsarEgressBuilder<OutT> withPulsarAddress(String pulsarAddress) {
-    this.pulsarAddress = Objects.requireNonNull(pulsarAddress);
+  /** @param serviceUrl The service URL of the Pulsar cluster. */
+  public PulsarEgressBuilder<OutT> withServiceUrl(String serviceUrl) {
+    this.serviceUrl.set(serviceUrl);
+    return this;
+  }
+
+  /** @param adminUrl The admin URL of the Pulsar cluster. */
+  public PulsarEgressBuilder<OutT> withAdminUrl(String adminUrl) {
+    this.adminUrl.set(adminUrl);
     return this;
   }
 
@@ -134,13 +148,13 @@ public final class PulsarEgressBuilder<OutT> {
 
   /** @return An {@link EgressSpec} that can be used in a {@code StatefulFunctionModule}. */
   public PulsarEgressSpec<OutT> build() {
-    return new PulsarEgressSpec<>(
-        id,
-        serializer,
-        pulsarAddress,
-        properties,
-        pulsarProducerPoolSize,
-        semantic,
-        transactionTimeoutDuration);
+    //    return new PulsarEgressSpec<>(
+    //        id,
+    //        properties,
+    //        pulsarProducerPoolSize,
+    //        semantic,
+    //        serializer,
+    //        transactionTimeoutDuration);
+    return null;
   }
 }
