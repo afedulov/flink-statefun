@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.apache.flink.statefun.sdk.EgressType;
 import org.apache.flink.statefun.sdk.io.EgressIdentifier;
 import org.apache.flink.statefun.sdk.io.EgressSpec;
-import org.apache.flink.statefun.sdk.pulsar.Constants;
+import org.apache.flink.statefun.sdk.pulsar.PulsarIOTypes;
 
 public final class PulsarEgressSpec<OutT> implements EgressSpec<OutT> {
   private final EgressIdentifier<OutT> id;
@@ -61,7 +61,7 @@ public final class PulsarEgressSpec<OutT> implements EgressSpec<OutT> {
 
   @Override
   public EgressType type() {
-    return Constants.PULSAR_EGRESS_TYPE;
+    return PulsarIOTypes.UNIVERSAL_EGRESS_TYPE;
   }
 
   public Class<? extends PulsarEgressSerializer<OutT>> serializerClass() {

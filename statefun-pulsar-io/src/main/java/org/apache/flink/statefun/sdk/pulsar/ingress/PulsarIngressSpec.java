@@ -22,8 +22,8 @@ import java.util.Properties;
 import org.apache.flink.statefun.sdk.IngressType;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
-import org.apache.flink.statefun.sdk.pulsar.Constants;
 import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
+import org.apache.flink.statefun.sdk.pulsar.PulsarIOTypes;
 
 public class PulsarIngressSpec<T> implements IngressSpec<T> {
   private final Properties properties;
@@ -57,7 +57,7 @@ public class PulsarIngressSpec<T> implements IngressSpec<T> {
 
   @Override
   public IngressType type() {
-    return Constants.PULSAR_INGRESS_TYPE;
+    return PulsarIOTypes.UNIVERSAL_INGRESS_TYPE;
   }
 
   public Properties properties() {

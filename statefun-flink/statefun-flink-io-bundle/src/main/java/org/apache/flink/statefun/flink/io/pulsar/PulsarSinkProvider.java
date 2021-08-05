@@ -17,8 +17,6 @@
  */
 package org.apache.flink.statefun.flink.io.pulsar;
 
-import static org.apache.flink.util.StringUtils.generateRandomAlphanumericString;
-
 import java.util.Optional;
 import java.util.Properties;
 import org.apache.flink.statefun.flink.io.common.ReflectionUtil;
@@ -40,7 +38,7 @@ public class PulsarSinkProvider implements SinkProvider {
 
     Properties properties = new Properties();
     properties.putAll(spec.properties());
-/*    properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, spec.kafkaAddress());
+    /*    properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, spec.kafkaAddress());
 
     Semantic producerSemantic = semanticFromSpec(spec);
 
@@ -50,11 +48,10 @@ public class PulsarSinkProvider implements SinkProvider {
           String.valueOf(spec.transactionTimeoutDuration().toMillis()));
     }*/
 
-
-/*    PulsarSerializationSchema<Person> pulsarSerialization = new PulsarSerializationSchemaWrapper.Builder<>(JsonSer.of(Person.class))
-        .usePojoMode(Person. class, RecordSchemaType.JSON)
-        .setTopicExtractor(person -> null)
-        .build();*/
+    /*    PulsarSerializationSchema<Person> pulsarSerialization = new PulsarSerializationSchemaWrapper.Builder<>(JsonSer.of(Person.class))
+    .usePojoMode(Person. class, RecordSchemaType.JSON)
+    .setTopicExtractor(person -> null)
+    .build();*/
 
     PulsarSerializationSchema<T> schema = serializationSchemaFromSpec(spec);
 
@@ -64,8 +61,7 @@ public class PulsarSinkProvider implements SinkProvider {
         PulsarClientUtils.newClientConf(spec.serviceUrl(), properties),
         properties,
         schema,
-        semanticFromSpec(spec)
-    );
+        semanticFromSpec(spec));
   }
 
   private <T> PulsarSerializationSchema<T> serializationSchemaFromSpec(PulsarEgressSpec<T> spec) {
@@ -95,5 +91,4 @@ public class PulsarSinkProvider implements SinkProvider {
     }
     throw new IllegalArgumentException(String.format("Wrong type %s", spec.type()));
   }
-
 }

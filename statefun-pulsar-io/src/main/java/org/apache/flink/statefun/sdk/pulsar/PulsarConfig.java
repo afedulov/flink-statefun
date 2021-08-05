@@ -56,17 +56,6 @@ public class PulsarConfig {
   public static final String KEY_DISABLED_METRICS = "key-disable-metrics";
   public static final String OLD_STATE_VERSION = "old-state-version";
 
-  public static final String INSTRUCTION_FOR_FAIL_ON_DATA_LOSS_FALSE =
-      "Some data may have been lost because they are not available in Pulsar any more; either the\n"
-          + " data was aged out by Pulsar or the topic may have been deleted before all the data in the\n"
-          + " topic was processed. If you want your streaming query to fail on such cases, set the source\n"
-          + " option \"failOnDataLoss\" to \"true\".";
-  public static final String INSTRUCTION_FOR_FAIL_ON_DATA_LOSS_TRUE =
-      "Some data may have been lost because they are not available in Pulsar any more; either the\n"
-          + " data was aged out by Pulsar or the topic may have been deleted before all the data in the\n"
-          + " topic was processed. If you don't want your streaming query to fail on such cases, set the\n"
-          + " source option \"failOnDataLoss\" to \"false\".";
-
   public static final String USE_EXTEND_FIELD = "use-extend-field";
   public static final String TOPIC_ATTRIBUTE_NAME = "__topic";
   public static final String KEY_ATTRIBUTE_NAME = "__key";

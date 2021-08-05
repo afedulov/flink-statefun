@@ -24,7 +24,6 @@ import static org.junit.Assert.assertThat;
 
 import com.google.protobuf.Message;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
-import org.apache.flink.statefun.flink.io.pulsar.RoutableProtobufPulsarSourceProvider;
 import org.apache.flink.statefun.flink.io.spi.JsonIngressSpec;
 import org.apache.flink.statefun.sdk.io.IngressIdentifier;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;

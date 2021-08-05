@@ -20,7 +20,6 @@ package org.apache.flink.statefun.flink.io.pulsar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.flink.statefun.flink.io.pulsar.PulsarDeserializationSchemaDelegate;
 import org.apache.flink.statefun.flink.io.spi.SourceProvider;
 import org.apache.flink.statefun.sdk.io.IngressSpec;
 import org.apache.flink.statefun.sdk.kafka.KafkaTopicPartition;

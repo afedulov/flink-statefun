@@ -30,7 +30,6 @@ import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilder;
 import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
 import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressSpec;
 import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressStartupPosition;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.Test;
 
 public class PulsarIngressBuilderTest {
@@ -65,7 +64,7 @@ public class PulsarIngressBuilderTest {
 
     PulsarIngressSpec<String> spec = builder.build();
 
-    assertThat(spec.type(), is(Constants.PULSAR_INGRESS_TYPE));
+    assertThat(spec.type(), is(PulsarIOTypes.UNIVERSAL_INGRESS_TYPE));
   }
 
   @Test
@@ -129,7 +128,10 @@ public class PulsarIngressBuilderTest {
 
     assertThat(
         spec.properties(),
-        allOf(isMapOfSize(3), hasProperty(PulsarConfig.SERVICE_URL, "pulsar://localhost:6650")));
+        allOf(
+            isMapOfSize(3),
+            hasProperty(PulsarConfig.SERVICE_URL, "pulsar://localhost:6650"),
+            hasProperty(PulsarConfig.ADMIN_URL, "pulsar://localhost:6650")));
 
     // TODO: add required parameters for pulsar
     //   hasProperty(ConsumerConfig.GROUP_ID_CONFIG, "test-group"),
@@ -153,25 +155,6 @@ public class PulsarIngressBuilderTest {
     PulsarIngressSpec<String> spec = builder.build();
 
     assertThat(spec.properties(), hasProperty(PulsarConfig.SERVICE_URL, "pulsar://localhost:6650"));
-  }
-
-  @Test
-  public void defaultNamedMethodConfigValuesShouldNotOverwriteProperties() {
-    Properties properties = new Properties();
-    properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-    PulsarIngressBuilder<String> builder =
-        PulsarIngressBuilder.forIdentifier(DUMMY_ID)
-            .withAdminUrl("http://localhost:8080")
-            .withServiceUrl("pulsar://localhost:6650")
-            .withTopic("topic")
-            .withSubscription("test-subscription")
-            .withDeserializer(NoOpDeserializer.class)
-            .withProperties(properties);
-
-    PulsarIngressSpec<String> spec = builder.build();
-
-    assertThat(spec.properties(), hasProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"));
   }
 
   private static class NoOpDeserializer implements PulsarIngressDeserializer<String> {

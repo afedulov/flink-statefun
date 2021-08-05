@@ -20,11 +20,19 @@ package org.apache.flink.statefun.sdk.pulsar;
 import org.apache.flink.statefun.sdk.EgressType;
 import org.apache.flink.statefun.sdk.IngressType;
 
-public final class Constants {
-  public static final IngressType PULSAR_INGRESS_TYPE =
+public final class PulsarIOTypes {
+
+  public static final IngressType UNIVERSAL_INGRESS_TYPE =
       new IngressType("statefun.pulsar.io", "universal-ingress");
-  public static final EgressType PULSAR_EGRESS_TYPE =
+
+  public static final IngressType ROUTABLE_PROTOBUF_INGRESS_TYPE =
+      new IngressType("io.statefun.pulsar", "ingress");
+
+  public static final EgressType UNIVERSAL_EGRESS_TYPE =
       new EgressType("statefun.pulsar.io", "universal-egress");
 
-  private Constants() {}
+  public static final EgressType GENERIC_EGRESS_TYPE =
+      new EgressType("io.statefun.pulsar", "egress");
+
+  private PulsarIOTypes() {}
 }

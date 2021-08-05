@@ -22,9 +22,8 @@ import java.util.Objects;
 import java.util.Properties;
 import org.apache.flink.statefun.sdk.io.EgressIdentifier;
 import org.apache.flink.statefun.sdk.io.EgressSpec;
-import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
 import org.apache.flink.statefun.sdk.pulsar.OptionalConfig;
-import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressBuilder;
+import org.apache.flink.statefun.sdk.pulsar.PulsarConfig;
 
 /**
  * A builder class for creating an {@link EgressSpec} that writes data out to a Pulsar cluster. By

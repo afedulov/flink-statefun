@@ -20,23 +20,19 @@ package org.apache.flink.statefun.flink.io.pulsar;
 import com.google.auto.service.AutoService;
 import java.util.Map;
 import org.apache.flink.statefun.flink.io.spi.FlinkIoModule;
-import org.apache.flink.statefun.sdk.pulsar.Constants;
+import org.apache.flink.statefun.sdk.pulsar.PulsarIOTypes;
 
 @AutoService(FlinkIoModule.class)
 public final class PulsarFlinkIoModule implements FlinkIoModule {
 
   @Override
   public void configure(Map<String, String> globalConfiguration, Binder binder) {
-    binder.bindSourceProvider(Constants.PULSAR_INGRESS_TYPE, new PulsarSourceProvider());
-    binder.bindSourceProvider(
-        ProtobufPulsarIngressTypes.PROTOBUF_PULSAR_INGRESS_TYPE,
-        new ProtobufPulsarSourceProvider());
-    binder.bindSourceProvider(
-        ProtobufPulsarIngressTypes.ROUTABLE_PROTOBUF_PULSAR_INGRESS_TYPE,
-        new RoutableProtobufPulsarSourceProvider());
 
-    binder.bindSinkProvider(PulsarEgressTypes.GENERIC_PULSAR_EGRESS_TYPE, new PulsarSinkProvider());
-    binder.bindSinkProvider(
-        KafkaEgressTypes.GENERIC_KAFKA_EGRESS_TYPE, new GenericPulsarSinkProvider());
+    binder.bindSourceProvider(PulsarIOTypes.UNIVERSAL_INGRESS_TYPE, new PulsarSourceProvider());
+    binder.bindSourceProvider(
+        PulsarIOTypes.ROUTABLE_PROTOBUF_INGRESS_TYPE, new RoutableProtobufPulsarSourceProvider());
+
+    binder.bindSinkProvider(PulsarIOTypes.UNIVERSAL_EGRESS_TYPE, new PulsarSinkProvider());
+    binder.bindSinkProvider(PulsarIOTypes.GENERIC_EGRESS_TYPE, new GenericPulsarSinkProvider());
   }
 }

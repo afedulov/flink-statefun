@@ -24,9 +24,6 @@ public final class ProtobufPulsarIngressTypes {
 
   private ProtobufPulsarIngressTypes() {}
 
-  public static final IngressType PROTOBUF_PULSAR_INGRESS_TYPE =
-      new IngressType("io.statefun.pulsar", "protobuf-ingress");
-
   public static final IngressType ROUTABLE_PROTOBUF_PULSAR_INGRESS_TYPE =
       new IngressType("io.statefun.pulsar", "ingress");
 }

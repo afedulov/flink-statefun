@@ -18,18 +18,19 @@
 
 package org.apache.flink.statefun.flink.io.pulsar;
 
-import static org.apache.flink.statefun.flink.io.pulsar.KafkaEgressSpecJsonParser.exactlyOnceDeliveryTxnTimeout;
-import static org.apache.flink.statefun.flink.io.pulsar.KafkaEgressSpecJsonParser.kafkaAddress;
-import static org.apache.flink.statefun.flink.io.pulsar.KafkaEgressSpecJsonParser.kafkaClientProperties;
-import static org.apache.flink.statefun.flink.io.pulsar.KafkaEgressSpecJsonParser.optionalDeliverySemantic;
+import static org.apache.flink.statefun.flink.io.pulsar.PulsarEgressSpecJsonParser.exactlyOnceDeliveryTxnTimeout;
+import static org.apache.flink.statefun.flink.io.pulsar.PulsarEgressSpecJsonParser.kafkaClientProperties;
+import static org.apache.flink.statefun.flink.io.pulsar.PulsarEgressSpecJsonParser.optionalDeliverySemantic;
+import static org.apache.flink.statefun.flink.io.pulsar.PulsarEgressSpecJsonParser.pulsarAdminUrl;
+import static org.apache.flink.statefun.flink.io.pulsar.PulsarEgressSpecJsonParser.pulsarServiceUrl;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
 import org.apache.flink.statefun.flink.io.spi.JsonEgressSpec;
 import org.apache.flink.statefun.flink.io.spi.SinkProvider;
 import org.apache.flink.statefun.sdk.io.EgressIdentifier;
 import org.apache.flink.statefun.sdk.io.EgressSpec;
-import org.apache.flink.statefun.sdk.kafka.KafkaEgressBuilder;
-import org.apache.flink.statefun.sdk.kafka.KafkaEgressSpec;
+import org.apache.flink.statefun.sdk.pulsar.egress.PulsarEgressBuilder;
+import org.apache.flink.statefun.sdk.pulsar.egress.PulsarEgressSpec;
 import org.apache.flink.statefun.sdk.reqreply.generated.TypedValue;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 
@@ -39,11 +40,11 @@ final class GenericPulsarSinkProvider implements SinkProvider {
 
   @Override
   public <T> SinkFunction<T> forSpec(EgressSpec<T> spec) {
-    KafkaEgressSpec<T> kafkaEgressSpec = asKafkaEgressSpec(spec);
+    PulsarEgressSpec<T> kafkaEgressSpec = asPulsarEgressSpec(spec);
     return delegateProvider.forSpec(kafkaEgressSpec);
   }
 
-  private static <T> KafkaEgressSpec<T> asKafkaEgressSpec(EgressSpec<T> spec) {
+  private static <T> PulsarEgressSpec<T> asPulsarEgressSpec(EgressSpec<T> spec) {
     if (!(spec instanceof JsonEgressSpec)) {
       throw new IllegalArgumentException("Wrong type " + spec.type());
     }
@@ -54,9 +55,11 @@ final class GenericPulsarSinkProvider implements SinkProvider {
 
     JsonNode json = casted.json();
 
-    KafkaEgressBuilder<T> kafkaEgressBuilder = KafkaEgressBuilder.forIdentifier(id);
-    kafkaEgressBuilder
-        .withKafkaAddress(kafkaAddress(json))
+    PulsarEgressBuilder<T> pulsarEgressBuilder = PulsarEgressBuilder.forIdentifier(id);
+
+    pulsarEgressBuilder
+        .withServiceUrl(pulsarServiceUrl(json))
+        .withAdminUrl(pulsarAdminUrl(json))
         .withProperties(kafkaClientProperties(json))
         .withSerializer(serializerClass());
 
@@ -65,28 +68,28 @@ final class GenericPulsarSinkProvider implements SinkProvider {
             semantic -> {
               switch (semantic) {
                 case AT_LEAST_ONCE:
-                  kafkaEgressBuilder.withAtLeastOnceProducerSemantics();
+                  pulsarEgressBuilder.withAtLeastOnceProducerSemantics();
                   break;
                 case EXACTLY_ONCE:
-                  kafkaEgressBuilder.withExactlyOnceProducerSemantics(
+                  pulsarEgressBuilder.withExactlyOnceProducerSemantics(
                       exactlyOnceDeliveryTxnTimeout(json));
                   break;
                 case NONE:
-                  kafkaEgressBuilder.withNoProducerSemantics();
+                  pulsarEgressBuilder.withNoProducerSemantics();
                   break;
                 default:
                   throw new IllegalStateException("Unrecognized producer semantic: " + semantic);
               }
             });
 
-    return kafkaEgressBuilder.build();
+    return pulsarEgressBuilder.build();
   }
 
   private static void validateConsumedType(EgressIdentifier<?> id) {
     Class<?> consumedType = id.consumedType();
     if (TypedValue.class != consumedType) {
       throw new IllegalArgumentException(
-          "Generic Kafka egress is only able to consume messages types of "
+          "Generic Pulsar egress is only able to consume messages types of "
               + TypedValue.class.getName()
               + " but "
               + consumedType.getName()
@@ -97,6 +100,6 @@ final class GenericPulsarSinkProvider implements SinkProvider {
   @SuppressWarnings("unchecked")
   private static <T> Class<T> serializerClass() {
     // this cast is safe, because we've already validated that the consumed type is Any.
-    return (Class<T>) GenericKafkaEgressSerializer.class;
+    return (Class<T>) GenericPulsarEgressSerializer.class;
   }
 }

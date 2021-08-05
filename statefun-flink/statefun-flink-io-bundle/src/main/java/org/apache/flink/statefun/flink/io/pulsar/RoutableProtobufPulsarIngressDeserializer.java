@@ -22,7 +22,6 @@ import com.google.protobuf.MoreByteStrings;
 import java.util.Map;
 import org.apache.flink.statefun.flink.io.generated.AutoRoutable;
 import org.apache.flink.statefun.flink.io.generated.RoutingConfig;
-import org.apache.flink.statefun.flink.io.pulsar.ProtobufPulsarIngressTypes;
 import org.apache.flink.statefun.sdk.IngressType;
 import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
 

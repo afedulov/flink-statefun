@@ -159,9 +159,8 @@ public final class PulsarIngressBuilder<T> {
     subscription.overwritePropertiesIfPresent(resultProps, PulsarConfig.SUBSCRIPTION_NAME);
 
     //    TODO: which options need to be considered here?
+    //      Subscription name could ne optional?
     //     .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
-    //    autoResetPosition.overwritePropertiesIfPresent(
-    //        resultProps, ConsumerConfig.AUTO_OFFSET_RESET_CONFIG);
 
     return resultProps;
   }

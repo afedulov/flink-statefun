@@ -19,7 +19,6 @@
 package org.apache.flink.statefun.flink.io.pulsar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,26 +32,18 @@ import org.apache.flink.statefun.flink.common.json.Selectors;
 import org.apache.flink.statefun.flink.io.generated.RoutingConfig;
 import org.apache.flink.statefun.flink.io.generated.TargetFunctionType;
 import org.apache.flink.statefun.sdk.pulsar.PulsarTopicPartition;
-import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressAutoResetPosition;
-import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressDeserializer;
 import org.apache.flink.statefun.sdk.pulsar.ingress.PulsarIngressStartupPosition;
 
 final class PulsarIngressSpecJsonParser {
 
   private PulsarIngressSpecJsonParser() {}
 
-  private static final JsonPointer DESCRIPTOR_SET_POINTER =
-      JsonPointer.compile("/ingress/spec/descriptorSet");
   private static final JsonPointer TOPICS_POINTER = JsonPointer.compile("/ingress/spec/topics");
-  private static final JsonPointer MESSAGE_TYPE_POINTER =
-      JsonPointer.compile("/ingress/spec/messageType");
   private static final JsonPointer PROPERTIES_POINTER =
       JsonPointer.compile("/ingress/spec/properties");
   private static final JsonPointer SERVICE_URL = JsonPointer.compile("/ingress/spec/service-url");
   private static final JsonPointer ADMIN_URL = JsonPointer.compile("/ingress/spec/admin-url");
   private static final JsonPointer SUBSCRIPTION = JsonPointer.compile("/ingress/spec/subscription");
-  private static final JsonPointer AUTO_RESET_POS_POINTER =
-      JsonPointer.compile("/ingress/spec/autoOffsetResetPosition");
 
   private static final JsonPointer STARTUP_POS_POINTER =
       JsonPointer.compile("/ingress/spec/startupPosition");
@@ -65,10 +56,6 @@ final class PulsarIngressSpecJsonParser {
   private static final JsonPointer ROUTABLE_TOPIC_VALUE_TYPE_POINTER =
       JsonPointer.compile("/valueType");
   private static final JsonPointer ROUTABLE_TOPIC_TARGETS_POINTER = JsonPointer.compile("/targets");
-
-  static List<String> topics(JsonNode json) {
-    return Selectors.textListAt(json, TOPICS_POINTER);
-  }
 
   static Map<String, RoutingConfig> routableTopics(JsonNode json) {
     Map<String, RoutingConfig> routableTopics = new HashMap<>();
@@ -102,39 +89,8 @@ final class PulsarIngressSpecJsonParser {
     return Selectors.textAt(json, ADMIN_URL);
   }
 
-  @SuppressWarnings("unchecked")
-  static <T> PulsarIngressDeserializer<T> deserializer(JsonNode json) {
-    String descriptorSetPath = Selectors.textAt(json, DESCRIPTOR_SET_POINTER);
-    String messageType = Selectors.textAt(json, MESSAGE_TYPE_POINTER);
-    // this cast is safe since we validate that the produced message type (T) is assignable to a
-    // Message.
-    // see asJsonIngressSpec()
-    return (PulsarIngressDeserializer<T>)
-        new ProtobufPulsarIngressDeserializer(descriptorSetPath, messageType);
-  }
-
   static Optional<String> optionalSubscription(JsonNode json) {
     return Selectors.optionalTextAt(json, SUBSCRIPTION);
-  }
-
-  static Optional<PulsarIngressAutoResetPosition> optionalAutoOffsetResetPosition(JsonNode json) {
-    Optional<String> conf = Selectors.optionalTextAt(json, AUTO_RESET_POS_POINTER);
-    if (!conf.isPresent()) {
-      return Optional.empty();
-    }
-
-    String autoOffsetResetConfig = conf.get().toUpperCase(Locale.ENGLISH);
-
-    try {
-      return Optional.of(PulsarIngressAutoResetPosition.valueOf(autoOffsetResetConfig));
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException(
-          "Invalid autoOffsetResetPosition: "
-              + autoOffsetResetConfig
-              + "; valid values are "
-              + Arrays.toString(PulsarIngressAutoResetPosition.values()),
-          e);
-    }
   }
 
   static Optional<PulsarIngressStartupPosition> optionalStartupPosition(JsonNode json) {
