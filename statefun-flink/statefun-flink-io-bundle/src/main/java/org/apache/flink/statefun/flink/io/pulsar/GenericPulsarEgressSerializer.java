@@ -29,6 +29,7 @@ import org.apache.flink.statefun.sdk.reqreply.generated.TypedValue;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.TypedMessageBuilder;
 import org.apache.pulsar.client.impl.MessageImpl;
 
 /**
@@ -43,16 +44,22 @@ public final class GenericPulsarEgressSerializer implements PulsarEgressSerializ
   private static final long serialVersionUID = 1L;
 
   @Override
+  public void serialize(TypedValue message, TypedMessageBuilder messageBuilder) {
+    PulsarMessage pulsarMessage = asPulsarMessage(message);
+
+    messageBuilder.value(pulsarMessage);
+  }
+
+  @Override
   public Message<byte[]> serialize(TypedValue message) {
     PulsarMessage protobufMessage = asPulsarMessage(message);
 
-    new MessageImpl<byte[]>("persistent://public/default/test", "1:1", Maps.newTreeMap(), "test".getBytes(), Schema.BYTES, null);
 
     return toProducerRecord(protobufMessage);
   }
 
   private static PulsarMessage asPulsarMessage(TypedValue message) {
-    if (!TypedValueUtil.isProtobufTypeOf(message, KafkaProducerRecord.getDescriptor())) {
+    if (!TypedValueUtil.isProtobufTypeOf(message, PulsarMessage.getDescriptor())) {
       throw new IllegalStateException(
           "The generic Pulsar egress expects only messages of type "
               + PulsarMessage.class.getName());
@@ -78,4 +85,5 @@ public final class GenericPulsarEgressSerializer implements PulsarEgressSerializ
       return new ProducerRecord<>(topic, key.getBytes(StandardCharsets.UTF_8), valueBytes);
     }
   }
+
 }

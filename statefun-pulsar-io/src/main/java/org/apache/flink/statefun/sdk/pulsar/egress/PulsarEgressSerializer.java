@@ -19,6 +19,7 @@ package org.apache.flink.statefun.sdk.pulsar.egress;
 
 import java.io.Serializable;
 import org.apache.pulsar.client.api.Message;
+import org.apache.pulsar.client.api.TypedMessageBuilder;
 
 /**
  * A {@link PulsarEgressSerializer} defines how to serialize values of type {@code T} into {@link
@@ -34,5 +35,6 @@ public interface PulsarEgressSerializer<OutT> extends Serializable {
    * @param t element to be serialized
    * @return Pulsar {@link Message}
    */
-  Message<byte[]> serialize(OutT t);
+//  void serialize(OutT element, TypedMessageBuilder<OutT> messageBuilder);
+  Message<OutT> serialize(OutT in);
 }

@@ -26,9 +26,11 @@ import org.apache.flink.statefun.sdk.pulsar.egress.PulsarEgressSerializer;
 import org.apache.flink.statefun.sdk.pulsar.egress.PulsarEgressSpec;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.connectors.pulsar.FlinkPulsarSink;
+import org.apache.flink.streaming.connectors.pulsar.internal.JsonSer;
 import org.apache.flink.streaming.connectors.pulsar.internal.PulsarClientUtils;
 import org.apache.flink.streaming.connectors.pulsar.table.PulsarSinkSemantic;
 import org.apache.flink.streaming.util.serialization.PulsarSerializationSchema;
+import org.apache.flink.streaming.util.serialization.PulsarSerializationSchemaWrapper;
 
 public class PulsarSinkProvider implements SinkProvider {
 
@@ -48,10 +50,11 @@ public class PulsarSinkProvider implements SinkProvider {
           String.valueOf(spec.transactionTimeoutDuration().toMillis()));
     }*/
 
-    /*    PulsarSerializationSchema<Person> pulsarSerialization = new PulsarSerializationSchemaWrapper.Builder<>(JsonSer.of(Person.class))
+    PulsarSerializationSchema<byte[]> pulsarSerialization = new PulsarSerializationSchemaWrapper.Builder<>(
+        JsonSer.of(Person.class))
     .usePojoMode(Person. class, RecordSchemaType.JSON)
     .setTopicExtractor(person -> null)
-    .build();*/
+    .build();
 
     PulsarSerializationSchema<T> schema = serializationSchemaFromSpec(spec);
 

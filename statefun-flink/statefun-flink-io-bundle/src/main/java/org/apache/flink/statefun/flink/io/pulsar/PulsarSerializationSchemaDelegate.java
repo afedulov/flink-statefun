@@ -36,7 +36,7 @@ final class PulsarSerializationSchemaDelegate<T> implements PulsarSerializationS
 
   @Override
   public void serialize(T t, TypedMessageBuilder<T> messageBuilder) {
-    serializer.serialize(t);
+    serializer.serialize(t, messageBuilder);
   }
 
   @Override
